@@ -1,0 +1,9 @@
+{
+  "name": "@footballke/rich-body",
+  "version": "1.0.0",
+  "strapi": {
+    "kind": "plugin",
+    "name": "rich-body",
+    "displayName": "Rich Body with Mentions"
+  }
+}

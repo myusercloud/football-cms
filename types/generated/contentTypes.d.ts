@@ -659,9 +659,7 @@ export interface ApiPlayerPlayer extends Struct.CollectionTypeSchema {
   };
   attributes: {
     bio: Schema.Attribute.Text & Schema.Attribute.Required;
-    clubId: Schema.Attribute.String & Schema.Attribute.Required;
-    clubName: Schema.Attribute.String & Schema.Attribute.Required;
-    clubSlug: Schema.Attribute.String & Schema.Attribute.Required;
+    club: Schema.Attribute.Relation<'manyToOne', 'api::club.club'>;
     contractType: Schema.Attribute.Enumeration<['permanent', 'loan']> &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'permanent'>;

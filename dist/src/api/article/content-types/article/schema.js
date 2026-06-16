@@ -15,7 +15,10 @@ exports.default = {
         title: { type: 'string', required: true },
         slug: { type: 'uid', targetField: 'title', required: true },
         excerpt: { type: 'text', required: true },
-        content: { type: 'richtext' },
+        content: {
+            type: 'customField',
+            customField: 'plugin::rich-body.rich-body',
+        },
         coverImage: { type: 'media', multiple: false, required: false, allowedTypes: ['images'] },
         featured: { type: 'boolean', default: false },
         author: {

@@ -33,9 +33,11 @@ export default {
       enum: ['right', 'left', 'both'],
       required: true,
     },
-    clubId: { type: 'string', required: true },
-    clubSlug: { type: 'string', required: true },
-    clubName: { type: 'string', required: true },
+    club: {
+      type: 'relation',
+      relation: 'manyToOne',
+      target: 'api::club.club',
+    },
     contractUntil: { type: 'string' },
     contractType: {
       type: 'enumeration',
