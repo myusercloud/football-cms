@@ -1,0 +1,34 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = {
+    kind: 'collectionType',
+    collectionName: 'clubs',
+    info: {
+        singularName: 'club',
+        pluralName: 'clubs',
+        displayName: 'Club',
+    },
+    options: { draftAndPublish: false },
+    pluginOptions: {},
+    attributes: {
+        name: { type: 'string', required: true },
+        slug: { type: 'uid', targetField: 'name', required: true },
+        shortName: { type: 'string', required: true },
+        abbreviation: { type: 'string', required: true },
+        founded: { type: 'integer', required: true },
+        city: { type: 'string', required: true },
+        country: { type: 'string', required: true, default: 'Kenya' },
+        logo: { type: 'media', multiple: false, allowedTypes: ['images'] },
+        primaryColor: { type: 'string', required: true },
+        secondaryColor: { type: 'string', required: true },
+        venueName: { type: 'string' },
+        venueCity: { type: 'string' },
+        venueCapacity: { type: 'integer' },
+        description: { type: 'text', required: true },
+        achievements: { type: 'json' },
+        twitterUrl: { type: 'string' },
+        facebookUrl: { type: 'string' },
+        instagramUrl: { type: 'string' },
+        websiteUrl: { type: 'string' },
+    },
+};

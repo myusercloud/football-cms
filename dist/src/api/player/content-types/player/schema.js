@@ -1,0 +1,58 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = {
+    kind: 'collectionType',
+    collectionName: 'players',
+    info: {
+        singularName: 'player',
+        pluralName: 'players',
+        displayName: 'Player',
+    },
+    options: { draftAndPublish: false },
+    pluginOptions: {},
+    attributes: {
+        name: { type: 'string', required: true },
+        slug: { type: 'uid', targetField: 'name', required: true },
+        jerseyNumber: { type: 'integer', required: true },
+        position: {
+            type: 'enumeration',
+            enum: [
+                'Goalkeeper', 'Centre-Back', 'Left-Back', 'Right-Back', 'Wing-Back',
+                'Defensive Midfielder', 'Central Midfielder', 'Attacking Midfielder',
+                'Left Midfielder', 'Right Midfielder', 'Striker', 'Second Striker',
+                'Left Winger', 'Right Winger',
+            ],
+            required: true,
+        },
+        secondaryPosition: { type: 'string' },
+        nationalityName: { type: 'string', required: true },
+        nationalityCode: { type: 'string', required: true },
+        nationalityFlag: { type: 'string', required: true },
+        dateOfBirth: { type: 'date', required: true },
+        height: { type: 'integer', required: true },
+        preferredFoot: {
+            type: 'enumeration',
+            enum: ['right', 'left', 'both'],
+            required: true,
+        },
+        clubId: { type: 'string', required: true },
+        clubSlug: { type: 'string', required: true },
+        clubName: { type: 'string', required: true },
+        contractUntil: { type: 'string' },
+        contractType: {
+            type: 'enumeration',
+            enum: ['permanent', 'loan'],
+            default: 'permanent',
+            required: true,
+        },
+        image: { type: 'media', multiple: false, allowedTypes: ['images'] },
+        bio: { type: 'text', required: true },
+        statsAppearances: { type: 'integer', default: 0 },
+        statsGoals: { type: 'integer', default: 0 },
+        statsAssists: { type: 'integer', default: 0 },
+        statsYellowCards: { type: 'integer', default: 0 },
+        statsRedCards: { type: 'integer', default: 0 },
+        statsMinutesPlayed: { type: 'integer', default: 0 },
+        statsCleanSheets: { type: 'integer', default: 0 },
+    },
+};

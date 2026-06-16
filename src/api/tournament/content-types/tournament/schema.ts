@@ -1,0 +1,32 @@
+export default {
+  kind: 'collectionType',
+  collectionName: 'tournaments',
+  info: {
+    singularName: 'tournament',
+    pluralName: 'tournaments',
+    displayName: 'Tournament',
+  },
+  options: { draftAndPublish: false },
+  pluginOptions: {},
+  attributes: {
+    name: { type: 'string', required: true },
+    slug: { type: 'uid', targetField: 'name', required: true },
+    shortName: { type: 'string', required: true },
+    edition: { type: 'string', required: true },
+    emblem: { type: 'media', multiple: false, allowedTypes: ['images'] },
+    totalTeams: { type: 'integer', required: true, default: 32 },
+    featured: { type: 'boolean', default: true },
+    hostCountries: { type: 'json' },
+    hostCities: { type: 'json' },
+    startDate: { type: 'string', required: true },
+    endDate: { type: 'string', required: true },
+    groupStageEnd: { type: 'string' },
+    knockoutStart: { type: 'string' },
+    currentPhase: {
+      type: 'enumeration',
+      enum: ['group', 'round-of-16', 'quarter-final', 'semi-final', 'final'],
+      default: 'group',
+      required: true,
+    },
+  },
+}
