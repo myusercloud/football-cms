@@ -1,14 +1,13 @@
-import type { Core } from '@strapi/strapi'
+'use strict'
 
-export default {
-  register({ strapi }: { strapi: Core.Strapi }) {
+module.exports = {
+  register({ strapi }) {
     strapi.customFields.register({
       name: 'rich-body',
       plugin: 'rich-body',
       type: 'richtext',
     })
 
-    // Search route — no auth required; returns player + club matches for a query string
     strapi.server.router.get('/api/rich-body/search', async (ctx) => {
       const q = String(ctx.query.q ?? '').trim()
       if (q.length < 1) {
@@ -18,12 +17,12 @@ export default {
 
       const [players, clubs] = await Promise.all([
         strapi.documents('api::player.player').findMany({
-          filters: { name: { $containsi: q } } as any,
+          filters: { name: { $containsi: q } },
           limit: 8,
           fields: ['name', 'slug'],
         }),
         strapi.documents('api::club.club').findMany({
-          filters: { name: { $containsi: q } } as any,
+          filters: { name: { $containsi: q } },
           limit: 8,
           fields: ['name', 'slug'],
         }),
