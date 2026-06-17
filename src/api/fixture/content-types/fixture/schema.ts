@@ -9,7 +9,7 @@ export default {
   options: { draftAndPublish: false },
   pluginOptions: {},
   attributes: {
-    status: {
+    matchStatus: {
       type: 'enumeration',
       enum: ['scheduled', 'live', 'halftime', 'fulltime', 'postponed'],
       default: 'scheduled',

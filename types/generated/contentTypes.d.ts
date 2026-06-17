@@ -631,15 +631,15 @@ export interface ApiFixtureFixture extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     matchday: Schema.Attribute.Integer;
-    preview: Schema.Attribute.Text;
-    publishedAt: Schema.Attribute.DateTime;
-    scoreAway: Schema.Attribute.Integer;
-    scoreHome: Schema.Attribute.Integer;
-    status: Schema.Attribute.Enumeration<
+    matchStatus: Schema.Attribute.Enumeration<
       ['scheduled', 'live', 'halftime', 'fulltime', 'postponed']
     > &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'scheduled'>;
+    preview: Schema.Attribute.Text;
+    publishedAt: Schema.Attribute.DateTime;
+    scoreAway: Schema.Attribute.Integer;
+    scoreHome: Schema.Attribute.Integer;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -837,15 +837,15 @@ export interface ApiTransferTransfer extends Struct.CollectionTypeSchema {
     playerPosition: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
     sourceLabel: Schema.Attribute.String;
-    status: Schema.Attribute.Enumeration<
-      ['confirmed', 'loan', 'rumour', 'exit']
-    > &
-      Schema.Attribute.Required;
     toClubCountry: Schema.Attribute.String;
     toClubName: Schema.Attribute.String;
     toClubShortName: Schema.Attribute.String;
     toClubSlug: Schema.Attribute.String;
     transferDate: Schema.Attribute.Date & Schema.Attribute.Required;
+    transferStatus: Schema.Attribute.Enumeration<
+      ['confirmed', 'loan', 'rumour', 'exit']
+    > &
+      Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

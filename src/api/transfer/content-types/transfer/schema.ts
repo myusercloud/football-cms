@@ -23,7 +23,7 @@ export default {
     toClubSlug:        { type: 'string' },
     toClubCountry:     { type: 'string' },
     fee:               { type: 'string' },
-    status: {
+    transferStatus: {
       type: 'enumeration',
       enum: ['confirmed', 'loan', 'rumour', 'exit'],
       required: true,
