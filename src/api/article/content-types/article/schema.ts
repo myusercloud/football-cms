@@ -7,7 +7,7 @@ export default {
     displayName: 'Article',
     description: 'News articles and match reports',
   },
-  options: { draftAndPublish: true },
+  options: { draftAndPublish: false },
   pluginOptions: {},
   attributes: {
     title: { type: 'string', required: true },

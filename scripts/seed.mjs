@@ -340,8 +340,6 @@ async function seedArticles(articles, categoryMap, authorMap) {
       ...(catDocId    ? { category: { connect: [{ documentId: catDocId }] } }    : {}),
       ...(authorDocId ? { author:   { connect: [{ documentId: authorDocId }] } } : {}),
     })
-    const docId = created.documentId ?? created.data?.documentId
-    if (docId) await cmsPublish('api::article.article', docId)
     console.log(`  ✓ "${article.title}"`)
   }
 }
