@@ -13,7 +13,7 @@ export default {
     title: { type: 'string', required: true },
     slug: { type: 'uid', targetField: 'title', required: true },
     excerpt: { type: 'text', required: true },
-    content: { type: 'blocks' },
+    content: { type: 'richtext' },
     coverImage: { type: 'media', multiple: false, required: false, allowedTypes: ['images'] },
     featured: { type: 'boolean', default: false },
     author: {
