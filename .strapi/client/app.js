@@ -7,11 +7,7 @@ import usersPermissions from "@strapi/plugin-users-permissions/strapi-admin";
 import richBody from "../../src/plugins/rich-body/./strapi-admin.ts";
 import { renderAdmin } from "@strapi/strapi/admin";
 
-import customisations from "../../src/admin/app.ts";
-
 renderAdmin(document.getElementById("strapi"), {
-  customisations,
-
   plugins: {
     i18n: i18N,
     "users-permissions": usersPermissions,
