@@ -5,5 +5,10 @@
     "kind": "plugin",
     "name": "rich-body",
     "displayName": "Rich Body with Mentions"
+  },
+  "exports": {
+    "./strapi-admin": {
+      "import": "./strapi-admin.ts"
+    }
   }
 }

@@ -7,8 +7,7 @@ export default ({ env }: { env: any }) => {
     sqlite: {
       connection: {
         filename: path.join(
-          __dirname,
-          '..',
+          process.cwd(),
           env('DATABASE_FILENAME', '.tmp/data.db')
         ),
       },

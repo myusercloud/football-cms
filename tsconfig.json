@@ -16,5 +16,5 @@
     }
   },
   "include": ["src", "config"],
-  "exclude": ["node_modules", "build", "dist", ".cache", ".tmp"]
+  "exclude": ["node_modules", "build", "dist", ".cache", ".tmp", "src/plugins/rich-body/admin", "src/plugins/rich-body/strapi-admin.ts"]
 }

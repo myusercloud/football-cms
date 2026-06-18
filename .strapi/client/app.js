@@ -4,11 +4,13 @@
  */
 import i18N from "@strapi/i18n/strapi-admin";
 import usersPermissions from "@strapi/plugin-users-permissions/strapi-admin";
+import richBody from "../../src/plugins/rich-body/./strapi-admin.ts";
 import { renderAdmin } from "@strapi/strapi/admin";
 
 renderAdmin(document.getElementById("strapi"), {
   plugins: {
     i18n: i18N,
     "users-permissions": usersPermissions,
+    "rich-body": richBody,
   },
 });
