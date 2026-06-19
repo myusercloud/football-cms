@@ -599,28 +599,16 @@ export interface ApiFixtureFixture extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
-    awayTeamAbbreviation: Schema.Attribute.String & Schema.Attribute.Required;
-    awayTeamId: Schema.Attribute.String & Schema.Attribute.Required;
-    awayTeamLogo: Schema.Attribute.String & Schema.Attribute.Required;
-    awayTeamName: Schema.Attribute.String & Schema.Attribute.Required;
-    awayTeamPrimaryColor: Schema.Attribute.String & Schema.Attribute.Required;
-    awayTeamShortName: Schema.Attribute.String & Schema.Attribute.Required;
-    awayTeamSlug: Schema.Attribute.String & Schema.Attribute.Required;
-    competitionId: Schema.Attribute.String & Schema.Attribute.Required;
-    competitionName: Schema.Attribute.String & Schema.Attribute.Required;
-    competitionSeason: Schema.Attribute.String & Schema.Attribute.Required;
-    competitionSlug: Schema.Attribute.String & Schema.Attribute.Required;
+    awayTeam: Schema.Attribute.Relation<'manyToOne', 'api::club.club'>;
+    competition: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::tournament.tournament'
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     featured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    homeTeamAbbreviation: Schema.Attribute.String & Schema.Attribute.Required;
-    homeTeamId: Schema.Attribute.String & Schema.Attribute.Required;
-    homeTeamLogo: Schema.Attribute.String & Schema.Attribute.Required;
-    homeTeamName: Schema.Attribute.String & Schema.Attribute.Required;
-    homeTeamPrimaryColor: Schema.Attribute.String & Schema.Attribute.Required;
-    homeTeamShortName: Schema.Attribute.String & Schema.Attribute.Required;
-    homeTeamSlug: Schema.Attribute.String & Schema.Attribute.Required;
+    homeTeam: Schema.Attribute.Relation<'manyToOne', 'api::club.club'>;
     kickoff: Schema.Attribute.DateTime & Schema.Attribute.Required;
     liveMinute: Schema.Attribute.Integer;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -639,6 +627,7 @@ export interface ApiFixtureFixture extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     scoreAway: Schema.Attribute.Integer;
     scoreHome: Schema.Attribute.Integer;
+    season: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
