@@ -21,6 +21,36 @@ if (!DATABASE_URL) {
   process.exit(1)
 }
 
+// These tables are schema-version metadata — Strapi already wrote the
+// correct values when it initialised the PG database. Overwriting them
+// with SQLite values would confuse Strapi's migration runner.
+const SKIP_TABLES = new Set([
+  'strapi_migrations_internal',
+  'strapi_database_schema',
+  'strapi_sessions',       // transient auth sessions — users re-login after migration
+  'sqlite_sequence',
+])
+
+function convertValue(val, pgType) {
+  if (val === null || val === undefined) return null
+
+  // SQLite stores booleans as 0 / 1
+  if (pgType === 'boolean') return val === 1 || val === true
+
+  // SQLite stores Strapi datetimes as millisecond epoch integers
+  if (
+    (pgType === 'timestamp with time zone' || pgType === 'timestamp without time zone') &&
+    typeof val === 'number'
+  ) return new Date(val).toISOString()
+
+  // SQLite stores JSON columns as serialised strings
+  if (pgType === 'jsonb' && typeof val === 'string') {
+    try { return JSON.parse(val) } catch { return val }
+  }
+
+  return val
+}
+
 async function migrate() {
   console.log('Connecting to databases...')
   const sqlite = new Database(SQLITE_PATH, { readonly: true })
@@ -28,22 +58,20 @@ async function migrate() {
   await pg.connect()
   console.log('Connected.\n')
 
-  // Verify Strapi has already created the PG schema
+  // Verify Strapi has already initialised the PG schema
   const schemaCheck = await pg.query(
     "SELECT 1 FROM information_schema.tables WHERE table_name = 'strapi_core_store_settings' AND table_schema = 'public'"
   )
   if (!schemaCheck.rows.length) {
-    console.error('PostgreSQL schema not found. You must start Strapi on PostgreSQL first:')
+    console.error('PostgreSQL schema not found. Please:')
     console.error('  1. Ensure DATABASE_CLIENT=postgres in .env')
     console.error('  2. Run: npm run develop')
-    console.error('  3. Wait for "Server started" message, then stop it (Ctrl+C)')
+    console.error('  3. Wait for "Server started" then stop it (Ctrl+C)')
     console.error('  4. Re-run this script')
-    await pg.end()
-    sqlite.close()
-    process.exit(1)
+    await pg.end(); sqlite.close(); process.exit(1)
   }
 
-  // Fetch all PG column types so we can convert SQLite values correctly
+  // Fetch all PG column type metadata
   const colResult = await pg.query(`
     SELECT table_name, column_name, data_type
     FROM information_schema.columns
@@ -56,88 +84,68 @@ async function migrate() {
     pgSchema[row.table_name][row.column_name] = row.data_type
   }
 
-  // All SQLite tables except the internal sequence table
-  const tables = sqlite
-    .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name != 'sqlite_sequence' ORDER BY name")
+  // Partition tables: link/junction tables last so FK constraints are satisfied
+  const allTables = sqlite
+    .prepare("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
     .all()
     .map(t => t.name)
+    .filter(t => !SKIP_TABLES.has(t) && pgSchema[t])
 
-  // Disable FK constraint checks for the duration of the migration
-  await pg.query('SET session_replication_role = replica')
+  const linkTables    = allTables.filter(t => t.endsWith('_lnk') || t.endsWith('_mph'))
+  const contentTables = allTables.filter(t => !t.endsWith('_lnk') && !t.endsWith('_mph'))
 
+  // ── Clear existing PG data ────────────────────────────────────────────────
+  // Delete link tables first (they hold the FK references), then content.
+  // Use DELETE (not TRUNCATE) — no superuser required.
+  console.log('Clearing existing PostgreSQL data...')
+  for (const table of [...linkTables, ...contentTables]) {
+    try {
+      await pg.query(`DELETE FROM "${table}"`)
+    } catch (err) {
+      console.warn(`  warn: could not clear ${table}: ${err.message}`)
+    }
+  }
+
+  // ── Insert migrated data ──────────────────────────────────────────────────
+  // Content tables first, link tables last — satisfies FK constraints.
+  console.log('\nMigrating rows...')
   let totalRows = 0
 
-  for (const table of tables) {
-    if (!pgSchema[table]) {
-      console.log(`  skip  ${table}  (not in PG schema)`)
-      continue
-    }
-
+  for (const table of [...contentTables, ...linkTables]) {
     const rows = sqlite.prepare(`SELECT * FROM "${table}"`).all()
-    if (!rows.length) {
-      console.log(`  empty ${table}`)
-      continue
-    }
-
-    // Wipe any data Strapi auto-created (e.g. admin user bootstrap)
-    await pg.query(`TRUNCATE TABLE "${table}" CASCADE`)
+    if (!rows.length) continue
 
     const colTypes = pgSchema[table]
     let inserted = 0
     let errors = 0
 
     for (const row of rows) {
-      // Only include columns that exist in PG schema
       const cols = Object.keys(row).filter(c => c in colTypes)
       if (!cols.length) continue
 
-      const values = cols.map(col => {
-        const val = row[col]
-        if (val === null || val === undefined) return null
-        const type = colTypes[col]
-
-        // SQLite stores booleans as 0/1 integers
-        if (type === 'boolean') return val === 1 || val === true
-
-        // SQLite stores Strapi datetimes as millisecond epoch integers
-        if (
-          (type === 'timestamp with time zone' || type === 'timestamp without time zone') &&
-          typeof val === 'number'
-        ) return new Date(val).toISOString()
-
-        // SQLite stores JSON as serialized strings
-        if (type === 'jsonb' && typeof val === 'string') {
-          try { return JSON.parse(val) } catch { return val }
-        }
-
-        return val
-      })
-
-      const placeholders = cols.map((_, i) => `$${i + 1}`).join(', ')
+      const values   = cols.map(col => convertValue(row[col], colTypes[col]))
       const colNames = cols.map(c => `"${c}"`).join(', ')
+      const placeholders = cols.map((_, i) => `$${i + 1}`).join(', ')
 
       try {
         await pg.query(`INSERT INTO "${table}" (${colNames}) VALUES (${placeholders})`, values)
         inserted++
       } catch (err) {
         errors++
-        if (errors <= 3) {
-          console.error(`  [${table}] insert error: ${err.message}`)
-        }
+        if (errors <= 2) console.error(`  [${table}] row error: ${err.message}`)
       }
     }
 
     totalRows += inserted
-    const status = errors ? ` (${errors} errors)` : ''
-    console.log(`  ✓  ${table.padEnd(48)} ${inserted} rows${status}`)
+    const tag = errors ? ` (${errors} errors)` : ''
+    if (inserted > 0) console.log(`  ✓  ${table.padEnd(48)} ${inserted} rows${tag}`)
   }
 
-  // Reset all PG sequences to be above the highest migrated ID
+  // ── Reset sequences ───────────────────────────────────────────────────────
   const seqResult = await pg.query(
     "SELECT sequencename FROM pg_sequences WHERE schemaname = 'public'"
   )
   for (const { sequencename } of seqResult.rows) {
-    // Sequence names follow the pattern <table>_id_seq
     const tableName = sequencename.replace(/_id_seq$/, '')
     try {
       await pg.query(`
@@ -145,16 +153,11 @@ async function migrate() {
           COALESCE((SELECT MAX(id) FROM "${tableName}"), 1), true
         )
       `)
-    } catch {
-      // Table may not have an id column — skip silently
-    }
+    } catch { /* table has no id column — skip */ }
   }
 
-  // Re-enable FK constraints
-  await pg.query('SET session_replication_role = DEFAULT')
-
-  console.log(`\nDone — ${totalRows} rows migrated to PostgreSQL.`)
-  console.log('You can now start Strapi: npm run develop')
+  console.log(`\nDone — ${totalRows} rows migrated.`)
+  console.log('Start Strapi: npm run develop')
 
   await pg.end()
   sqlite.close()
