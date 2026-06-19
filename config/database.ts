@@ -14,14 +14,19 @@ export default ({ env }: { env: any }) => {
       useNullAsDefault: true,
     },
     postgres: {
-      connection: {
-        host: env('DATABASE_HOST', '127.0.0.1'),
-        port: env.int('DATABASE_PORT', 5432),
-        database: env('DATABASE_NAME', 'footballke_cms'),
-        user: env('DATABASE_USERNAME', 'postgres'),
-        password: env('DATABASE_PASSWORD', 'postgres'),
-        ssl: env.bool('DATABASE_SSL', false),
-      },
+      connection: env('DATABASE_URL')
+        ? {
+            connectionString: env('DATABASE_URL'),
+            ssl: { rejectUnauthorized: false },
+          }
+        : {
+            host: env('DATABASE_HOST', '127.0.0.1'),
+            port: env.int('DATABASE_PORT', 5432),
+            database: env('DATABASE_NAME', 'footballke_cms'),
+            user: env('DATABASE_USERNAME', 'postgres'),
+            password: env('DATABASE_PASSWORD', 'postgres'),
+            ssl: env.bool('DATABASE_SSL', false) ? { rejectUnauthorized: false } : false,
+          },
     },
   }
 
