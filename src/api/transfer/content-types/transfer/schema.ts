@@ -10,18 +10,21 @@ export default {
   options: { draftAndPublish: false },
   pluginOptions: {},
   attributes: {
-    playerName:        { type: 'string', required: true },
-    playerPosition:    { type: 'string', required: true },
-    playerNationality: { type: 'string', required: true },
-    playerAge:         { type: 'integer' },
-    fromClubName:      { type: 'string' },
-    fromClubShortName: { type: 'string' },
-    fromClubSlug:      { type: 'string' },
-    fromClubCountry:   { type: 'string' },
-    toClubName:        { type: 'string' },
-    toClubShortName:   { type: 'string' },
-    toClubSlug:        { type: 'string' },
-    toClubCountry:     { type: 'string' },
+    player: {
+      type: 'relation',
+      relation: 'manyToOne',
+      target: 'api::player.player',
+    },
+    fromClub: {
+      type: 'relation',
+      relation: 'manyToOne',
+      target: 'api::club.club',
+    },
+    toClub: {
+      type: 'relation',
+      relation: 'manyToOne',
+      target: 'api::club.club',
+    },
     fee:               { type: 'string' },
     transferStatus: {
       type: 'enumeration',

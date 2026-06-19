@@ -808,10 +808,7 @@ export interface ApiTransferTransfer extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     fee: Schema.Attribute.String;
-    fromClubCountry: Schema.Attribute.String;
-    fromClubName: Schema.Attribute.String;
-    fromClubShortName: Schema.Attribute.String;
-    fromClubSlug: Schema.Attribute.String;
+    fromClub: Schema.Attribute.Relation<'manyToOne', 'api::club.club'>;
     linkedArticleSlug: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -819,16 +816,10 @@ export interface ApiTransferTransfer extends Struct.CollectionTypeSchema {
       'api::transfer.transfer'
     > &
       Schema.Attribute.Private;
-    playerAge: Schema.Attribute.Integer;
-    playerName: Schema.Attribute.String & Schema.Attribute.Required;
-    playerNationality: Schema.Attribute.String & Schema.Attribute.Required;
-    playerPosition: Schema.Attribute.String & Schema.Attribute.Required;
+    player: Schema.Attribute.Relation<'manyToOne', 'api::player.player'>;
     publishedAt: Schema.Attribute.DateTime;
     sourceLabel: Schema.Attribute.String;
-    toClubCountry: Schema.Attribute.String;
-    toClubName: Schema.Attribute.String;
-    toClubShortName: Schema.Attribute.String;
-    toClubSlug: Schema.Attribute.String;
+    toClub: Schema.Attribute.Relation<'manyToOne', 'api::club.club'>;
     transferDate: Schema.Attribute.Date & Schema.Attribute.Required;
     transferStatus: Schema.Attribute.Enumeration<
       ['confirmed', 'loan', 'rumour', 'exit']
