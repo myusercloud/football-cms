@@ -43,9 +43,15 @@ function convertValue(val, pgType) {
     typeof val === 'number'
   ) return new Date(val).toISOString()
 
-  // SQLite stores JSON columns as serialised strings
-  if (pgType === 'jsonb' && typeof val === 'string') {
-    try { return JSON.parse(val) } catch { return val }
+  // SQLite stores JSON columns as serialised strings.
+  // Handle both 'json' and 'jsonb' PG types; empty string must become null.
+  // IMPORTANT: pass the raw string, not a parsed JS object. The pg driver converts
+  // JS arrays to PostgreSQL array syntax ({"a","b"}) instead of JSON (["a","b"]),
+  // which causes "invalid input syntax for type json". PostgreSQL accepts JSON strings
+  // natively as input to json/jsonb columns, so passing the raw string is correct.
+  if ((pgType === 'jsonb' || pgType === 'json') && typeof val === 'string') {
+    if (val === '') return null
+    try { JSON.parse(val); return val } catch { return null }
   }
 
   return val
