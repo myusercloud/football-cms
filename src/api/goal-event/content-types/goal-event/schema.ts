@@ -13,6 +13,7 @@ export default {
       type: 'relation',
       relation: 'manyToOne',
       target: 'api::fixture.fixture',
+      inversedBy: 'goalEvents',
       required: true,
     },
     player: {

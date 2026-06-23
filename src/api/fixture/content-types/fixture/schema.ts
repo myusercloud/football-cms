@@ -40,5 +40,11 @@ export default {
     scoreAway: { type: 'integer' },
     liveMinute: { type: 'integer' },
     preview: { type: 'text' },
+    goalEvents: {
+      type: 'relation',
+      relation: 'oneToMany',
+      target: 'api::goal-event.goal-event',
+      mappedBy: 'fixture',
+    },
   },
 }
