@@ -27,7 +27,7 @@ export default {
       enum: ['home', 'away'],
       required: true,
     },
-    minute: { type: 'integer', required: true, min: 1 },
+    minute: { type: 'integer', required: true },
     addedTime: { type: 'integer' },
     isOwnGoal: { type: 'boolean', default: false },
     isPenalty: { type: 'boolean', default: false },
