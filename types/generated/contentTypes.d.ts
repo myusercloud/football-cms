@@ -656,7 +656,7 @@ export interface ApiPlayerPlayer extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    dateOfBirth: Schema.Attribute.Date & Schema.Attribute.Required;
+    dateOfBirth: Schema.Attribute.Date;
     height: Schema.Attribute.Integer & Schema.Attribute.Required;
     image: Schema.Attribute.Media<'images'>;
     jerseyNumber: Schema.Attribute.Integer & Schema.Attribute.Required;

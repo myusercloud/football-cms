@@ -40,5 +40,10 @@ export default {
     scoreAway: { type: 'integer' },
     liveMinute: { type: 'integer' },
     preview: { type: 'text' },
+    goalEvents: {
+      type: 'component',
+      component: 'football.goal-event',
+      repeatable: true,
+    },
   },
 }
