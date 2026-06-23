@@ -41,10 +41,9 @@ export default {
     liveMinute: { type: 'integer' },
     preview: { type: 'text' },
     goalEvents: {
-      type: 'relation',
-      relation: 'oneToMany',
-      target: 'api::goal-event.goal-event',
-      mappedBy: 'fixture',
+      type: 'component',
+      component: 'football.goal-event',
+      repeatable: true,
     },
   },
 }
