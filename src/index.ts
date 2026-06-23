@@ -21,6 +21,7 @@ export default {
       'api::standing.standing',
       'api::tournament.tournament',
       'api::transfer.transfer',
+      'api::goal-event.goal-event',
     ]
 
     const existingPermissions: { action: string }[] = await strapi
