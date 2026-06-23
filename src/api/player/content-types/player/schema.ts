@@ -26,7 +26,7 @@ export default {
     nationalityName: { type: 'string', required: true },
     nationalityCode: { type: 'string', required: true },
     nationalityFlag: { type: 'string', required: true },
-    dateOfBirth: { type: 'date', required: true },
+    dateOfBirth: { type: 'date' },
     height: { type: 'integer', required: true },
     preferredFoot: {
       type: 'enumeration',
