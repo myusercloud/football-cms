@@ -12,6 +12,7 @@
   "dependencies": {
     "@strapi/i18n": "5.48.0",
     "@strapi/plugin-users-permissions": "5.48.0",
+    "@strapi/provider-upload-cloudinary": "^5.48.1",
     "@strapi/strapi": "5.48.0",
     "@tiptap/extension-mention": "^3.26.1",
     "@tiptap/pm": "^3.26.1",
