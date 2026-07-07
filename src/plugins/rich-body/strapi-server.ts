@@ -16,21 +16,28 @@ export default {
         return
       }
 
-      const [players, clubs] = await Promise.all([
-        strapi.documents('api::player.player').findMany({
-          filters: { name: { $containsi: q } } as any,
-          limit: 8,
-          fields: ['name', 'slug'],
-        }),
-        strapi.documents('api::club.club').findMany({
-          filters: { name: { $containsi: q } } as any,
-          limit: 8,
-          fields: ['name', 'slug'],
-        }),
-      ])
+      let players: any[], clubs: any[]
+      try {
+        ;[players, clubs] = await Promise.all([
+          strapi.documents('api::player.player').findMany({
+            filters: { name: { $containsi: q } } as any,
+            limit: 8,
+            fields: ['name', 'slug'],
+          }),
+          strapi.documents('api::club.club').findMany({
+            filters: { name: { $containsi: q } } as any,
+            limit: 8,
+            fields: ['name', 'slug'],
+          }),
+        ])
+      } catch {
+        ctx.status = 500
+        ctx.body = { error: 'Search failed' }
+        return
+      }
 
       ctx.body = [
-        ...players.map((p) => ({
+        ...players.map((p: any) => ({
           id:         p.slug,
           entityType: 'player',
           entitySlug: p.slug,
@@ -38,7 +45,7 @@ export default {
           label:      `${p.name} — player`,
           href:       `/players/${p.slug}`,
         })),
-        ...clubs.map((c) => ({
+        ...clubs.map((c: any) => ({
           id:         c.slug,
           entityType: 'club',
           entitySlug: c.slug,

@@ -25,7 +25,7 @@ async function autoSetFromClub(data: any) {
 
   if (!playerDocId) return
 
-  const player = await (strapi as any).documents('api::player.player').findOne({
+  const player = await (global as any).strapi.documents('api::player.player').findOne({
     documentId: playerDocId,
     populate: ['club'],
   })
