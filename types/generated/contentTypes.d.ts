@@ -608,6 +608,7 @@ export interface ApiFixtureFixture extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     featured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    goalEvents: Schema.Attribute.Component<'football.goal-event', true>;
     homeTeam: Schema.Attribute.Relation<'manyToOne', 'api::club.club'>;
     kickoff: Schema.Attribute.DateTime & Schema.Attribute.Required;
     liveMinute: Schema.Attribute.Integer;
